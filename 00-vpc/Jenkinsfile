@@ -18,11 +18,11 @@ pipeline {
         stage('Init and Plan') {
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-creds') {
-                    sh """
+                    sh 
                         cd 00-vpc
                         terraform init -reconfigure
-                        terraform plan -out=tfplan
-                    """
+                        // terraform plan -out=tfplan
+                
                 }
             }
         }
@@ -34,7 +34,7 @@ pipeline {
             } */
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-creds') {
-                    sh """
+                    sh
                         cd 00-vpc
                         if [ ${params.ACTION} == 'apply' ]
                         then
@@ -43,30 +43,30 @@ pipeline {
                         then
                             terraform destroy -auto-approve
                         fi
-                    """
+                    
                 }
             }
         }
-        stage ('Trigger SG') {
-            when {
-                expression { params.ACTION == 'apply' }
-            }
-            steps{
-                build job: '10-sg', parameters: [string(name: 'ACTION', value: "apply")], wait: false
-            }
-        }
-    }
+    //     stage ('Trigger SG') {
+    //         when {
+    //             expression { params.ACTION == 'apply' }
+    //         }
+    //         steps{
+    //             build job: '10-sg', parameters: [string(name: 'ACTION', value: "apply")], wait: false
+    //         }
+    //     }
+    // }
 
-    post {
-        always{
-            echo "This sections runs always"
-            deleteDir()
-        }
-        success{
-            echo "This section run when pipeline success"
-        }
-        failure{
-            echo "This section run when pipeline failure"
-        }
-    }
+    // post {
+    //     always{
+    //         echo "This sections runs always"
+    //         deleteDir()
+    //     }
+    //     success{
+    //         echo "This section run when pipeline success"
+    //     }
+    //     failure{
+    //         echo "This section run when pipeline failure"
+    //     }
+    // }
 }
