@@ -17,37 +17,34 @@ pipeline {
                     sh '''
                         cd 00-vpc
                         terraform init -reconfigure
-                        if [ "${ACTION}" == "apply" ]; then
-                            terraform plan -out=tfplan
-                        fi
                     '''
                 }
             }
         }
 
-        stage('Apply or Destroy') {
-            steps {
-                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
-                    sh '''
-                        cd 00-vpc
-                        if [ "${ACTION}" == "apply" ]; then
-                            terraform apply -auto-approve tfplan
-                        elif [ "${ACTION}" == "destroy" ]; then
-                            terraform destroy -auto-approve
-                        fi
-                    '''
-                }
-            }
-        }
+        // stage('Apply or Destroy') {
+        //     steps {
+        //         withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+        //             sh '''
+        //                 cd 00-vpc
+        //                 if [ "${ACTION}" == "apply" ]; then
+        //                     terraform apply -auto-approve tfplan
+        //                 elif [ "${ACTION}" == "destroy" ]; then
+        //                     terraform destroy -auto-approve
+        //                 fi
+        //             '''
+        //         }
+        //     }
+        // }
 
-        stage('Trigger SG') {
-            when {
-                expression { params.ACTION == 'apply' }
-            }
-            steps {
-                build job: '10-sg', parameters: [string(name: 'ACTION', value: "apply")], wait: false
-            }
-        }
+        // stage('Trigger SG') {
+        //     when {
+        //         expression { params.ACTION == 'apply' }
+        //     }
+        //     steps {
+        //         build job: '10-sg', parameters: [string(name: 'ACTION', value: "apply")], wait: false
+        //     }
+        // }
     }
 
     post {
