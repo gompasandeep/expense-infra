@@ -71,4 +71,5 @@ resource "aws_route53_record" "mysql-dev" {
   type    = "CNAME"
   ttl     = 5
   records = [module.db.db_instance_address]
+  allow_overwrite = true
 }
