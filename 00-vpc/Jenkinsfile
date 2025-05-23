@@ -26,29 +26,29 @@ pipeline {
             }
         }
 
-        stage('Apply or Destroy') {
-            input {
-                message "Should we continue?"
-                ok "Yes, we should."
-            }
-            steps {
-                withAWS(region: 'us-east-1', credentials: 'aws-creds') {
-                    sh '''
-                        cd 00-vpc
-                        terraform apply -auto-approve
-                    '''
-                }
-            }
-        }
+        // stage('Apply or Destroy') {
+        //     input {
+        //         message "Should we continue?"
+        //         ok "Yes, we should."
+        //     }
+        //     steps {
+        //         withAWS(region: 'us-east-1', credentials: 'aws-creds') {
+        //             sh '''
+        //                 cd 00-vpc
+        //                 terraform apply -auto-approve
+        //             '''
+        //         }
+        //     }
+        // }
 
-        stage('Trigger SG') {
-            when {
-                expression { params.ACTION == 'apply' }
-            }
-            steps {
-                build job: '10-sg', parameters: [string(name: 'ACTION', value: "apply")], wait: false
-            }
-        }
+        // stage('Trigger SG') {
+        //     when {
+        //         expression { params.ACTION == 'apply' }
+        //     }
+        //     steps {
+        //         build job: '10-sg', parameters: [string(name: 'ACTION', value: "apply")], wait: false
+        //     }
+        // }
     }
 
     post {
